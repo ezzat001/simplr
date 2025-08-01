@@ -355,6 +355,13 @@
     );
   });
 
+  $("#ts-wrong-login").on("click", function () {
+    toastr.error(
+      "Wrong username or password",
+      "Sorry!"
+    );
+  });
+
   // Position Top Left
   $("#pos-top-left").on("click", function () {
     toastr.info(

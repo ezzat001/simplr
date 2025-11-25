@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from crm.constants import US_STATES_CHOICES,COUNTRIES_CHOICES
+from simplr.constants import US_STATES_CHOICES,COUNTRIES_CHOICES
 from core.models import TimestampMixin
 
 
@@ -250,6 +250,8 @@ class Profile(TimestampMixin): #Profile Standard Information
 
     def __str__(self):
         return (self.full_name or self.user.username) if self.full_name else "Unnamed Profile"
+
+
 
 
 

@@ -1,0 +1,86 @@
+                    <div class="tab-pane fade" id="solar" role="tabpanel" aria-labelledby="solar-tab" tabindex="0">
+                    <form class="needs-validation" novalidate method="post" action="{% url 'lead_form' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            {% for field in fields %}
+                            {% if forloop.counter0|divisibleby:2 %}
+                                <div class="form-group mb-3">
+                                <label>{{ field.label }}{% if field.required %} *{% endif %}</label>
+
+                                {% if field.field_type == "text" %}
+                                    <input type="text" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "number" %}
+                                    <input type="number" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "email" %}
+                                    <input type="email" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "date" %}
+                                    <input type="date" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "boolean" %}
+                                    <input type="checkbox" name="{{ field.label|slugify }}" class="form-check-input">
+
+                                {% elif field.field_type == "textarea" %}
+                                    <textarea name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}></textarea>
+
+                                {% elif field.field_type == "select" %}
+                                    <select name="{{ field.label|slugify }}" class="form-select" {% if field.required %}required{% endif %}>
+                                    <option value="">Select an option</option>
+                                    {% for option in field.options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                    </select>
+                                {% endif %}
+                                </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-lg-6">
+                            {% for field in fields %}
+                            {% if not forloop.counter0|divisibleby:2 %}
+                                <div class="form-group mb-3">
+                                <label>{{ field.label }}{% if field.required %} *{% endif %}</label>
+
+                                {% if field.field_type == "text" %}
+                                    <input type="text" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "number" %}
+                                    <input type="number" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "email" %}
+                                    <input type="email" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "date" %}
+                                    <input type="date" name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}>
+
+                                {% elif field.field_type == "boolean" %}
+                                    <input type="checkbox" name="{{ field.label|slugify }}" class="form-check-input">
+
+                                {% elif field.field_type == "textarea" %}
+                                    <textarea name="{{ field.label|slugify }}" class="form-control" {% if field.required %}required{% endif %}></textarea>
+
+                                {% elif field.field_type == "select" %}
+                                    <select name="{{ field.label|slugify }}" class="form-select" {% if field.required %}required{% endif %}>
+                                    <option value="">Select an option</option>
+                                    {% for option in field.options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                    </select>
+                                {% endif %}
+                                </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-12">
+                        <br>
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-primary" type="submit" name="re_submit">Submit</button>
+                        </div>
+                        </div>
+                    </div>
+                    </form>
+                    </div>

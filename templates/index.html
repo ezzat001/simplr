@@ -1,15 +1,564 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
+  <link rel="stylesheet" href="{% static 'assets/libs/select2/dist/css/select2.min.css' %}">
+<style>
+#map {
+    height: 500px;
+    width: 100%;
+}
+
+.popup-content {
+    font-size: 14px;
+}
+
+.popup-content strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.popup-content a.btn-contact {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.popup-content a.btn-contact:hover {
+    background-color: #0056b3;
+}
+</style>
 
 {% endblock %}
 
 {% block content %}
-  <h1>Welcome to My Site!</h1>
-  <p>This is the homepage content.</p>
+     <div class="row">
+            <div class="col-sm-6 col-xl-3">
+              <div class="card bg-success-subtle shadow-none">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center"><i class="ti ti-verified"></i>
+                    <div class="round rounded text-bg-success d-flex align-items-center justify-content-center">
+                        <iconify-icon icon="mdi:home" style="font-size: 29px;"></iconify-icon>
+                    </div>
+                    <h6 class="mb-0 ms-3">Wholesaling</h6>
+                    <div class="ms-auto text-success d-flex align-items-center">
+                      <span class="fs-3 fw-bold">{{location_count}}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-4">
+                    <h3 class="mb-0 fw-semibold fs-7">{{wholesaling_leads_count}}</h3>
+                      <div class="d-flex gap-2">
+                          
+                      </div>                  
+                </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card bg-danger-subtle shadow-none">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center">
+                    <div class="round rounded text-bg-danger d-flex align-items-center justify-content-center">
+                        <iconify-icon icon="mdi:map-marker" style="font-size: 29px;"></iconify-icon>
+
+                    </div>
+                    <h6 class="mb-0 ms-3">Land Leads</h6>
+                    <div class="ms-auto text-danger d-flex align-items-center">
+                      <span class="fs-3 fw-bold">{{land_locations_count}}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-4">
+                    <h3 class="mb-0 fw-semibold fs-7">{{land_leads_count}}</h3>
+                    <div class="d-flex gap-2">
+                         
+
+                           
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card bg-warning-subtle shadow-none">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center">
+                    <div class="round rounded text-bg-warning d-flex align-items-center justify-content-center">
+                        <iconify-icon icon="ic:baseline-timer" style="font-size: 29px;"></iconify-icon>
+                    </div>
+                    <h6 class="mb-0 ms-3">Long-Term</h6>
+                    <div class="ms-auto text-warning d-flex align-items-center">
+                      <span class="fs-3 fw-bold text-warning">{{longterm_locations_count}}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-4">
+                    <h3 class="mb-0 fw-semibold fs-7">{{longterm_leads_count}}</h3>
+                    <div class="d-flex gap-2">
+                          
+
+                          
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card bg-info-subtle shadow-none">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center">
+                    <div class="round rounded text-bg-info d-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mdi:chart-bar" style="font-size: 29px;"></iconify-icon>
+                    </div>
+                    <h6 class="mb-0 ms-3">Total</h6>
+                    <div class="ms-auto text-info d-flex align-items-center">
+                      <span class="fs-3 fw-bold text-info">{{total_locations}}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-4">
+                    <h3 class="mb-0 fw-semibold fs-7">{{total_leads}}</h3>
+                    <div class="d-flex gap-2">
+                          <!-- Refresh Button -->
+                          <button id="refresh-btn-whos" class="btn btn-sm text-bg-info btn-light border shadow-sm d-flex align-items-center justify-content-center"
+                                  style="width:38px; height:38px;">
+                              <iconify-icon icon="mdi:refresh" style="font-size:22px;"></iconify-icon>
+                          </button>
+
+                          
+                          <button id="update-btn-whos" class="btn btn-sm text-bg-info btn-light border shadow-sm d-flex align-items-center justify-content-center"
+                                  style="width:38px; height:38px;">
+                              <iconify-icon icon="mdi:database-refresh" style="font-size:22px;"></iconify-icon>
+                          </button>
+
+                          
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-9">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title fw-semibold">Opportunities</h4>
+                  <p class="card-subtitle">Geolocation</p>
+                  <div class="row mt-4">
+                                    <div id="map" class="leaflet mt-0 mt-lg-n4"></div>
+
+                  </div>
+                </div>
+              </div>
+              <!--
+              <div class="card">
+                <div class="card-body pb-2">
+                  <div class="d-md-flex align-items-center gap-3 justify-content-between mb-3">
+                    <div>
+                      <h4 class="card-title fw-semibold">Your Investments</h4>
+                      <p class="card-subtitle">What Are the Risks of Investing?</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 mt-4 mt-md-0">
+                      <div class="dropdown">
+                        <button class="btn bg-primary-subtle dropdown-toggle" type="button" id="invest1" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="cc BTC me-1" title="BTC"></i> BTC
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="invest1">
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                              <i class="cc ETH me-1" title="ETH"></i> ETH
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                              <i class="cc LTC me-1" title="LTC"></i> LTC
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                              <i class="cc XRP me-1" title="XRP"></i> XRP
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                      <span class="round bg-primary flex-shrink-0 rounded-circle text-white d-flex align-items-center justify-content-center">
+                        <i class="ti ti-repeat fs-6"></i>
+                      </span>
+                      <div class="dropdown">
+                        <button class="btn bg-danger-subtle dropdown-toggle" type="button" id="invest2" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="cc ETH me-1" title="ETH"></i> ETH
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="invest2">
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                              <i class="cc BTC me-1" title="BTC"></i> BTC
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                              <i class="cc ETH me-1" title="ETH"></i> ETH
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                              <i class="cc LTC me-1" title="LTC"></i> LTC
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="investments" class="mx-n8"></div>
+                </div>
+              </div>
+              -->
+            </div>
+              
+              <div class="col-xl-3 mt-4 mt-md-0">
+                <div class="card">
+                  <div class="card-body p-4">
+                    <h5>Filter Stages</h5>
+                    <form id="stage-filters">
+                      {% for stage_key, stage_name in stages.items %}
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{ stage_key }}" id="stage-{{ stage_key }}" checked>
+                        <label class="form-check-label" for="stage-{{ stage_key }}">
+                          {{ stage_name }}
+                        </label>
+                      </div>
+                      {% endfor %}
+
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="land_pipeline" id="hide-land" checked>
+                        <label class="form-check-label" for="hide-land">
+                          Show Land
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="longterm_pipeline" id="hide-longterm" checked>
+                        <label class="form-check-label" for="hide-longterm">
+                          Show Long Term
+                        </label>
+                      </div>
+
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+
+
+                
+                
+              </div>
+            
+            <!--
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title fw-semibold">Trade History</h4>
+                    <p class="card-subtitle">Trade and the Age of Exploration</p>
+                    <div class="table-responsive mt-4">
+                      <table class="table table-borderless text-nowrap align-middle mb-0">
+                        <tbody>
+                          <tr class="bg-light">
+                            <td class="rounded-start bg-transparent">
+                              <div class="d-flex align-items-center gap-3">
+                                <div>
+                                  <i class="cc BTC fs-7"></i>
+                                </div>
+                                <div>
+                                  <h6 class="mb-0">Bitcoin</h6>
+                                  <span class="fs-3">BTC</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="bg-transparent"> $981.1254 <i class="ti ti-chevron-down text-danger ms-1 fs-4"></i>
+                            </td>
+                            <td class="bg-transparent">
+                              <i class="cc ETC me-1 text-primary fs-5" title="ETC"></i> 0.23125
+                            </td>
+                            <td class="bg-transparent">$1.23560 B</td>
+                            <td class="bg-transparent">04 Feb 2024</td>
+                            <td class="text-end rounded-end bg-transparent">
+                              <span class="badge bg-danger">transfer</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="6"></td>
+                          </tr>
+                          <tr class="bg-light">
+                            <td class="rounded-start bg-transparent">
+                              <div class="d-flex align-items-center gap-3">
+                                <div>
+                                  <i class="cc ETH fs-7"></i>
+                                </div>
+                                <div>
+                                  <h6 class="mb-0">Ethereum</h6>
+                                  <span class="fs-3">ETH</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="bg-transparent"> $450.1254 <i class="ti ti-chevron-down text-danger ms-1 fs-4"></i>
+                            </td>
+                            <td class="bg-transparent">
+                              <i class="cc ETC me-1 text-primary fs-5" title="ETC"></i> 0.45000
+                            </td>
+                            <td class="bg-transparent">$3.23560 B</td>
+                            <td class="bg-transparent">09 Mar 2024</td>
+                            <td class="text-end rounded-end bg-transparent">
+                              <span class="badge bg-primary">sell</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="6"></td>
+                          </tr>
+                          <tr class="bg-light">
+                            <td class="rounded-start bg-transparent">
+                              <div class="d-flex align-items-center gap-3">
+                                <div>
+                                  <i class="cc LTC fs-7"></i>
+                                </div>
+                                <div>
+                                  <h6 class="mb-0">Litecoin</h6>
+                                  <span class="fs-3">LTC</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="bg-transparent"> $100.1254 <i class="ti ti-chevron-up text-success ms-1 fs-4"></i>
+                            </td>
+                            <td class="bg-transparent">
+                              <i class="cc BTC me-1 text-danger fs-5" title="BTC"></i> 0.56012
+                            </td>
+                            <td class="bg-transparent">$2.45620 B</td>
+                            <td class="bg-transparent">12 Dec 2024</td>
+                            <td class="text-end rounded-end bg-transparent">
+                              <span class="badge bg-success">buy</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="6"></td>
+                          </tr>
+                          <tr class="bg-light">
+                            <td class="rounded-start bg-transparent">
+                              <div class="d-flex align-items-center gap-3">
+                                <div>
+                                  <i class="cc XRP fs-7"></i>
+                                </div>
+                                <div>
+                                  <h6 class="mb-0">XRP</h6>
+                                  <span class="fs-3">XRP</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="bg-transparent"> $450.1254 <i class="ti ti-chevron-down text-danger ms-1 fs-4"></i>
+                            </td>
+                            <td class="bg-transparent">
+                              <i class="cc ETC me-1 text-primary fs-5" title="ETC"></i> 0.45000
+                            </td>
+                            <td class="bg-transparent">$3.23560 B</td>
+                            <td class="bg-transparent">01 Aug 2024</td>
+                            <td class="text-end rounded-end bg-transparent">
+                              <span class="badge bg-danger">transfer</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            -->
+          </div>
+
+
+
+<!-- Page loader (hidden by default) -->
+<div id="page-loader" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+">
+    <div class="spinner-border text-success" role="status" style="width: 4rem; height: 4rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+    
 {% endblock %}
 
 {% block scripts %}
-<!-- No scripts for now -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.7.1/dist/images/';
+    var map = L.map('map').setView([47.5, -120.5], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; Simplr Properties',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Marker icons
+    var greenIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var redIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    var yellowIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+
+    var qualifiedLeads = {{ locations|default:"{}"|safe }};
+    var allMarkers = [];
+
+    // Create markers
+    for (var leadId in qualifiedLeads) {
+        var lead = qualifiedLeads[leadId];
+        var lat = lead.latitude;
+        var lon = lead.longitude;
+
+        if (lat != 0 && lon != 0) {
+            var popupHtml = `
+                <div class="popup-content">
+                    <strong>Name:</strong> ${lead.name}<br>
+                    <strong>Address:</strong> ${lead.address}<br>
+                    ${lead.stage ? `<strong>Stage:</strong> ${lead.stage}<br>` : ""}
+                    <a href="${lead.contact_url}" target="_blank" class="btn-contact">Contact</a>
+                </div>
+            `;
+
+            var icon;
+            if (lead.pipeline === 'wholesaling') icon = greenIcon;
+            else if (lead.pipeline === 'land') icon = redIcon;
+            else if (lead.pipeline === 'longterm') icon = yellowIcon;
+            else icon = redIcon;
+
+            var m = L.marker([lat, lon], {icon: icon}).bindPopup(popupHtml);
+
+            // Store raw stage key and pipeline for filtering
+            m.stageKey = lead.stage_key || null;
+            m.pipeline = lead.pipeline || null;
+
+            m.addTo(map);
+            allMarkers.push(m);
+        }
+    }
+
+    // Fit bounds initially
+    function fitMapToVisibleMarkers() {
+        var visibleMarkers = allMarkers.filter(m => map.hasLayer(m));
+        if (visibleMarkers.length > 0) {
+            var group = new L.featureGroup(visibleMarkers);
+            map.fitBounds(group.getBounds().pad(0.2));
+        }
+    }
+    fitMapToVisibleMarkers();
+
+    // Checkbox filtering
+    var checkboxes = document.querySelectorAll('#stage-filters input[type=checkbox]');
+    checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var checkedValues = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            allMarkers.forEach(function(m) {
+                var showMarker = false;
+
+                // Stage filtering
+                if (m.stageKey && checkedValues.includes(m.stageKey)) showMarker = true;
+
+                // Markers with no stage
+                if (!m.stageKey) {
+                    if (m.pipeline === 'land' && checkedValues.includes('land_pipeline')) showMarker = true;
+                    else if (m.pipeline === 'longterm' && checkedValues.includes('longterm_pipeline')) showMarker = true;
+                    else if (m.pipeline === 'wholesaling') showMarker = true; // always show wholesaling
+                }
+
+                if (showMarker) {
+                    if (!map.hasLayer(m)) m.addTo(map);
+                } else {
+                    if (map.hasLayer(m)) map.removeLayer(m);
+                }
+            });
+
+            fitMapToVisibleMarkers();
+        });
+    });
+});
+</script>
+
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const refreshBtn = document.getElementById('refresh-btn-whos');
+    const pageLoader = document.getElementById('page-loader');
+
+    refreshBtn.addEventListener('click', function() {
+        // Show loader
+        pageLoader.style.display = 'flex';
+
+        fetch("{% url 'sync_opportunities' %}")
+        .then(response => response.json())
+        .then(data => {
+            console.log('Sync report:', data);
+            // Reload page after sync
+            location.reload();
+        })
+        .catch(err => {
+            console.error('Error syncing opportunities:', err);
+            alert('Something went wrong. Check console.');
+            // Hide loader on error
+            pageLoader.style.display = 'none';
+        });
+    });
+});
+</script>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const refreshBtn = document.getElementById('update-btn-whos');
+    const pageLoader = document.getElementById('page-loader');
+
+    refreshBtn.addEventListener('click', function() {
+        // Show loader
+        pageLoader.style.display = 'flex';
+
+        fetch("{% url 'update_opportunities' %}")
+        .then(response => response.json())
+        .then(data => {
+            console.log('Sync report:', data);
+            // Reload page after sync
+            location.reload();
+        })
+        .catch(err => {
+            console.error('Error syncing opportunities:', err);
+            alert('Something went wrong. Check console.');
+            // Hide loader on error
+            pageLoader.style.display = 'none';
+        });
+    });
+});
+</script>
+
+
 
 {% endblock %}

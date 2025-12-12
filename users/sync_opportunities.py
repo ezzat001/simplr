@@ -7,34 +7,34 @@ from core.models import Opportunity,ServerSetting
 #   CONFIG
 # --------------------------
 
-pipelines = {'wholesaling':'Wf9mQtXgnetMG8PrMvBZ',
-             'land':'XfoSVfzmsfTSoBHP0jp7',
-             'longterm':'fxII6ro6lplz3xD0vjS7',
-             'new_leads':'V2qQLuub1HLlr1ZeSWeJ',
+pipelines = {'active_leads':'Wf9mQtXgnetMG8PrMvBZ', 
+             #'land':'XfoSVfzmsfTSoBHP0jp7', 
+             'warm_leads':'fxII6ro6lplz3xD0vjS7',
+             #'new_leads':'V2qQLuub1HLlr1ZeSWeJ',
              }
 
 stages = {
     # wholesaling (whos)
-    'whos-cool': '9b1b711a-d1f4-4762-8870-072c4f41b5cd',
-    'whos-warm': '50c23a7b-388f-4aa6-a736-e78159675426',
-    'whos-hot': '88c41523-df95-41a4-bc29-b4062093dab7',
-    'whos-appointment_set': '448fd172-54cc-469f-9063-2d4b8b735f2f',
-    'whos-post_appt_confirm_dd': 'bf8859e8-e655-4079-9889-8d8868c5e786',
-    'whos-offer_sent': '0f70df6f-bc4a-44d8-b21e-5e3fdba0ef6e',
-    'whos-under_contract_with_seller': '1a21200c-75a3-43b3-b5e3-4480632f3644',
-    'whos-buyer_signed': '87d7d2f9-5540-4d05-84c8-5ef22bead393',
-    'whos-closed': '8c1f2ea2-847f-425d-b1e4-1961c9f92db7',
+    'active_new_leads':"5ee6c64b-d644-4bfb-8954-03a27d6d1684",
+    "active_no_contact":"58391874-d0c5-487e-9f67-d77cd2368fc2",
+    'active_cool':"9b1b711a-d1f4-4762-8870-072c4f41b5cd",
+    'active_warm':"50c23a7b-388f-4aa6-a736-e78159675426",
+    "active_hot":"88c41523-df95-41a4-bc29-b4062093dab7",
+    "active_appointment_set":"000cf568-e59b-4422-a941-0229ab88f9c4",
+    "active_fell_off_contract":"bf8859e8-e655-4079-9889-8d8868c5e786",
+    "active_offer_sent":"0f70df6f-bc4a-44d8-b21e-5e3fdba0ef6e",
+    "active_under_contract_with_seller":"1a21200c-75a3-43b3-b5e3-4480632f3644",
+    "active_buyer_signed":"87d7d2f9-5540-4d05-84c8-5ef22bead393",
+    "active_closed":"8c1f2ea2-847f-425d-b1e4-1961c9f92db7",
 
-    # longterm
-    'longterm-may_sell_12mo': '43a741b4-9851-42e2-b23a-a493d2fb4b74',
-    'longterm-dead_lead': 'df930803-943a-4e90-b0f2-f4550f7299f3',
+    
 
+   
 }
 
 
 TOKEN = "pit-95530279-fb75-4aee-a1d0-be4d24fedd26"
 LOCATION_ID = "69jbeIj2NHqOyRqcklPo"
-#PIPELINE_ID = "Wf9mQtXgnetMG8PrMvBZ"
 LIMIT = 100
 
 GEOCODIO_API_KEY = ServerSetting.objects.first().geo_api_key if ServerSetting.objects.exists() else ""

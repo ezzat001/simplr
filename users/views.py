@@ -28,26 +28,20 @@ def update_opportunities_view(request):
 # Map raw stage keys to friendly display names for all pipelines
 STAGE_DISPLAY = {
     # Wholesaling
-    'whos-cool': 'Wholesaling - Cool',
-    'whos-warm': 'Wholesaling - Warm',
-    'whos-hot': 'Wholesaling - Hot',
-    'whos-appointment_set': 'Wholesaling - App. Set',
-    'whos-post_appt_confirm_dd': 'Wholesaling - Post App. Confirm',
-    'whos-offer_sent': 'Wholesaling - Offer Sent',
-    'whos-under_contract_with_seller': 'Wholesaling - Under Contract',
-    'whos-buyer_signed': 'Wholesaling - Buyer Signed',
-    'whos-closed': 'Wholesaling - Closed',
+    'active_new_leads':"New Leads",
+    "active_no_contact":"No Contact Made",
+    'active_cool':"Cool",
+    'active_warm':"Warm",
+    "active_hot":"Hot",
+    "active_appointment_set":"Appointment Set",
+    "active_fell_off_contract":"Fell Off Contract/Purgatory",
+    "active_offer_sent":"Offer Sent",
+    "active_under_contract_with_seller":"Under Contract with Seller",
+    "active_buyer_signed":"Buyer Signed",
+    "active_closed":"Closed",
+    
 
-    # Land
-    'land-new_lead': 'Land - New Lead',
-    'land-offer_sent': 'Land - Offer Sent',
-    'land-under_contract': 'Land - Under Contract',
-    'land-closed': 'Land - Closed',
-    'land-dead_lead': 'Land - Dead Lead',
-
-    # Long Term
-    'longterm-may_sell_12mo': 'Long Term - May Sell 12 Mo',
-    'longterm-dead_lead': 'Long Term - Dead Lead',
+    
 }
 
 @login_required(login_url='login')
@@ -56,9 +50,8 @@ def home_page(request):
     all_leads = list(Opportunity.objects.all())
 
     PIPELINES = {
-        'wholesaling': 'Wf9mQtXgnetMG8PrMvBZ',
-        'land': 'XfoSVfzmsfTSoBHP0jp7',
-        'longterm': 'fxII6ro6lplz3xD0vjS7',
+        'active_leads': 'Wf9mQtXgnetMG8PrMvBZ',
+        'warm_leads': 'fxII6ro6lplz3xD0vjS7',
     }
 
     # Stages for the checkbox filter card
@@ -70,44 +63,66 @@ def home_page(request):
 
     # Lead type counts
     wholesaling_leads = []
-    land_leads = []
     longterm_leads = []
 
+    wholesaling_locations = 0
+    closed_deals = 0
+    longterm_locations = 0
+
+    def make_marker(lead):
+        return {
+            'latitude': lead.lat,
+            'longitude': lead.lng,
+            'name': lead.contact_name or "No Name",
+            'address': lead.address or "No Address",
+            'stage': STAGE_DISPLAY.get(lead.stage, ""),
+            'stage_key': lead.stage,
+            'pipeline': lead.pipeline_type or "",
+            'contact_url': f"https://ninja.xleads.com/v2/location/69jbeIj2NHqOyRqcklPo/conversations/conversations/{lead.contact_id}",
+        }
+
     for lead in all_leads:
-        display_stage = STAGE_DISPLAY.get(lead.stage, "")
-
-        def make_marker(lead):
-            return {
-                'latitude': lead.lat,
-                'longitude': lead.lng,
-                'name': lead.contact_name or "No Name",
-                'address': lead.address or "No Address",
-                'stage': STAGE_DISPLAY.get(lead.stage, ""),  # friendly name
-                'stage_key': lead.stage,                      # raw key for JS filtering
-                'pipeline': lead.pipeline_type or "",
-                'contact_url': f"https://ninja.xleads.com/v2/location/69jbeIj2NHqOyRqcklPo/conversations/conversations/{lead.contact_id}",
-            }
-
-        # Append to lead-type lists for counts
-        if lead.pipeline_id == PIPELINES['wholesaling']:
+        # Categorize lead by pipeline type
+        if lead.pipeline_id == PIPELINES['active_leads']:
             wholesaling_leads.append(lead)
-        elif lead.pipeline_id == PIPELINES['land']:
-            land_leads.append(lead)
-        elif lead.pipeline_id == PIPELINES['longterm']:
-            longterm_leads.append(lead)
+            if lead.lat and lead.lng:
+                wholesaling_locations += 1
 
-        # Add to combined locations
+        
+
+        elif lead.pipeline_id == PIPELINES['warm_leads']:
+            longterm_leads.append(lead)
+            if lead.lat and lead.lng:
+                longterm_locations += 1
+        
+
+        # Add marker to locations dict
         if lead.lat and lead.lng:
             locations[str(lead.id)] = make_marker(lead)
             total_locations += 1
+        if lead.stage == 'active_closed':
+            closed_deals += 1 
+           
 
     context = {
         'locations': json.dumps(locations),
+
+        # Total markers on map
         'total_locations': total_locations,
-        'wholesaling_leads_count': len(wholesaling_leads),
-        'land_leads_count': len(land_leads),
-        'longterm_leads_count': len(longterm_leads),
+
+        # Total leads (regardless of map)
         'total_leads': len(all_leads),
+
+        # Counts of leads
+        'active_leads_count': len(wholesaling_leads),
+        'warm_leads_count': len(longterm_leads),
+
+        # Counts of markers with coordinates
+        'active_locations_count': wholesaling_locations,
+        'warm_locations_count': longterm_locations,
+        
+        "closed_deals_count": closed_deals,
+
         'stages': STAGE_DISPLAY,
     }
 

@@ -44,13 +44,13 @@
                     <div class="round rounded text-bg-success d-flex align-items-center justify-content-center">
                         <iconify-icon icon="mdi:home" style="font-size: 29px;"></iconify-icon>
                     </div>
-                    <h6 class="mb-0 ms-3">Wholesaling</h6>
+                    <h6 class="mb-0 ms-3">Active Leads</h6>
                     <div class="ms-auto text-success d-flex align-items-center">
-                      <span class="fs-3 fw-bold">{{location_count}}</span>
+                      <span class="fs-3 fw-bold">{{active_locations_count}}</span>
                     </div>
                   </div>
                   <div class="d-flex align-items-center justify-content-between mt-4">
-                    <h3 class="mb-0 fw-semibold fs-7">{{wholesaling_leads_count}}</h3>
+                    <h3 class="mb-0 fw-semibold fs-7">{{active_leads_count}}</h3>
                       <div class="d-flex gap-2">
                           
                       </div>                  
@@ -58,30 +58,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="card bg-danger-subtle shadow-none">
-                <div class="card-body p-4">
-                  <div class="d-flex align-items-center">
-                    <div class="round rounded text-bg-danger d-flex align-items-center justify-content-center">
-                        <iconify-icon icon="mdi:map-marker" style="font-size: 29px;"></iconify-icon>
-
-                    </div>
-                    <h6 class="mb-0 ms-3">Land Leads</h6>
-                    <div class="ms-auto text-danger d-flex align-items-center">
-                      <span class="fs-3 fw-bold">{{land_locations_count}}</span>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-center justify-content-between mt-4">
-                    <h3 class="mb-0 fw-semibold fs-7">{{land_leads_count}}</h3>
-                    <div class="d-flex gap-2">
-                         
-
-                           
-                      </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+           
             <div class="col-sm-6 col-xl-3">
               <div class="card bg-warning-subtle shadow-none">
                 <div class="card-body p-4">
@@ -89,17 +66,41 @@
                     <div class="round rounded text-bg-warning d-flex align-items-center justify-content-center">
                         <iconify-icon icon="ic:baseline-timer" style="font-size: 29px;"></iconify-icon>
                     </div>
-                    <h6 class="mb-0 ms-3">Long-Term</h6>
+                    <h6 class="mb-0 ms-3">Warm Leads</h6>
                     <div class="ms-auto text-warning d-flex align-items-center">
-                      <span class="fs-3 fw-bold text-warning">{{longterm_locations_count}}</span>
+                      <span class="fs-3 fw-bold text-warning">{{warm_locations_count}}</span>
                     </div>
                   </div>
                   <div class="d-flex align-items-center justify-content-between mt-4">
-                    <h3 class="mb-0 fw-semibold fs-7">{{longterm_leads_count}}</h3>
+                    <h3 class="mb-0 fw-semibold fs-7">{{warm_leads_count}}</h3>
                     <div class="d-flex gap-2">
                           
 
                           
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+             <div class="col-sm-6 col-xl-3">
+              <div class="card bg-danger-subtle shadow-none">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center">
+                    <div class="round rounded text-bg-danger d-flex align-items-center justify-content-center">
+                        <iconify-icon icon="mdi:cash-multiple" style="font-size: 29px;"></iconify-icon>
+
+                    </div>
+                    <h6 class="mb-0 ms-3">Closed Deals</h6>
+                    <div class="ms-auto text-danger d-flex align-items-center">
+                      <span class="fs-3 fw-bold"> </span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-4">
+                    <h3 class="mb-0 fw-semibold fs-7">{{closed_deals_count}}</h3>
+                    <div class="d-flex gap-2">
+                         
+
+                           
                       </div>
                   </div>
                 </div>
@@ -228,17 +229,12 @@
                       {% endfor %}
 
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="land_pipeline" id="hide-land" checked>
-                        <label class="form-check-label" for="hide-land">
-                          Show Land
+                        <input class="form-check-input" type="checkbox" value="warm_pipeline" id="hide-warm" checked>
+                        <label class="form-check-label" for="hide-warm">
+                          Show Warm Leads
                         </label>
                       </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="longterm_pipeline" id="hide-longterm" checked>
-                        <label class="form-check-label" for="hide-longterm">
-                          Show Long Term
-                        </label>
-                      </div>
+                      
 
                     </form>
                   </div>
@@ -398,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
     L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.7.1/dist/images/';
     var map = L.map('map').setView([47.5, -120.5], 7);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
         attribution: '&copy; Simplr Properties',
         maxZoom: 19
     }).addTo(map);
@@ -440,9 +436,8 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
 
             var icon;
-            if (lead.pipeline === 'wholesaling') icon = greenIcon;
-            else if (lead.pipeline === 'land') icon = redIcon;
-            else if (lead.pipeline === 'longterm') icon = yellowIcon;
+            if (lead.pipeline === 'active_leads') icon = greenIcon;
+            else if (lead.pipeline === 'warm_leads') icon = yellowIcon;
             else icon = redIcon;
 
             var m = L.marker([lat, lon], {icon: icon}).bindPopup(popupHtml);
@@ -482,9 +477,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Markers with no stage
                 if (!m.stageKey) {
-                    if (m.pipeline === 'land' && checkedValues.includes('land_pipeline')) showMarker = true;
+                    if (m.pipeline === 'warm_leads' && checkedValues.includes('warm_pipeline')) showMarker = true;
                     else if (m.pipeline === 'longterm' && checkedValues.includes('longterm_pipeline')) showMarker = true;
-                    else if (m.pipeline === 'wholesaling') showMarker = true; // always show wholesaling
+                    else if (m.pipeline === 'active_leads') showMarker = true; // always show wholesaling
                 }
 
                 if (showMarker) {

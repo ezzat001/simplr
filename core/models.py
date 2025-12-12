@@ -45,10 +45,9 @@ class ServerSetting(TimestampMixin):
 
 class Opportunity(models.Model):
     PIPELINE_CHOICES = [
-        ('wholesaling', 'Wholesaling'),
-        ('land', 'Land'),
-        ('longterm', 'Long-Term'),
-        ('new_leads', 'New Leads'),
+        ('active_leads', 'Active Leads'),
+        ('warm_leads', 'Warm Leads'),
+        
     ]
 
     contact_id = models.CharField(max_length=255, unique=True)

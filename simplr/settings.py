@@ -22,7 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-dev-only-change-me'
+)
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,18 +84,18 @@ WSGI_APPLICATION = 'simplr.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DB_ENGINE = config('DB_ENGINE', default='sqlite')
+DB_ENGINE = os.environ.get('DB_ENGINE', 'sqlite')
 
 if DB_ENGINE == 'sqlite':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': config('DB_NAME', default=os.path.join(BASE_DIR, 'db.sqlite3')),
+            'NAME': os.environ.get(
+                'DB_NAME',
+                os.path.join(BASE_DIR, 'db.sqlite3')
+            ),
         }
     }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
